@@ -1,0 +1,203 @@
+<html>
+<head>
+	<title>show pictures in turn</title>
+	<style type="text/css">
+	#container{
+		position: relative;
+		width: 900px;
+		height: 600px;
+		border:2px solid black;
+		overflow: hidden;/*只显示窗口第一张图片*/
+	}
+
+	#list{
+		position: absolute;
+		z-index: 1;
+		width: 5400px;
+		height: 600px;
+		left: 0px;
+	}
+
+	#list img{
+		float: left;
+		width: 900px;
+		height: 600px;
+	}
+
+	#buttons{
+		position: absolute;
+		left: 45%;
+		bottom: 20px;
+		z-index: 2;
+		height: 10px;
+		width: 120px;
+	}
+
+	#buttons span{
+		float: left;
+		margin-right: 5px;
+		width: 10px;
+		height: 10px;
+		border:1px solid black;
+		border-radius: 50%;
+		background: #333;
+		cursor: pointer;
+	}
+
+	#buttons .on{
+		background: orangered;
+	}
+
+	.arrow{
+		position: absolute;
+		top: 45%;
+		z-index: 2;
+		display: none;
+		width: 40px;
+		height: 40px;
+		font-size: 40px;
+		font-weight: bold;
+		line-height: 40px;
+		text-align: center;
+		color: #fff;
+		background-color: rgba(0,0,0,.3);
+		cursor: pointer;
+		text-decoration: none;
+	}
+
+	.arrow :hover{
+		background-color: rgba(0,0,0,0.7);
+	}
+
+	#container:hover .arrow{
+		display: block;
+	}
+
+	#prev{
+		left: 20px;
+		z-index: 3;
+	}
+
+	#next{
+		right: 20px;
+		z-index: 3;
+	}
+
+	#buttons span:hover{
+		background:orangered;
+	}
+	</style>
+</head>
+<body>
+	<div id="container">
+		<div id="list">
+			<img src="images\1.jpg" alt="1">
+			<img src="images\2.jpg" alt="2">
+			<img src="images\3.jpg" alt="3">
+			<img src="images\4.jpg" alt="4">
+			<img src="images\5.jpg" alt="5">
+			<img src="images\6.jpg" alt="6">
+		</div>
+		<div id="buttons">
+			<span index="1" class="on"></span>
+			<span index="2"></span>
+			<span index="3"></span>
+			<span index="4"></span>
+			<span index="5"></span>
+			<span index="6"></span>
+		</div>
+		<a href="javascript:;" id="prev" class="arrow" onclick="prev()">&lt;</a>
+		<a href="javascript:;" id="next" class="arrow" onclick="next()">&gt;</a>
+	</div>
+	<script type="text/javascript">
+	 window.onload = function() 
+	{
+	 	play();
+    }
+
+    var timer;
+    function play(){
+    	timer = setInterval(next,1000);//调用无名函数，不用加括号
+    	getIndex();
+    }
+
+    function stop(){
+    	clearInterval(timer);
+    }
+
+    document.getElementById("list").onmouseover=stop;
+    document.getElementById("list").onmouseout=play;
+
+    var buttons = document.getElementById('buttons').getElementsByTagName("span");
+
+    function deselectAll()
+    {
+
+	    for (var i = 0; i < buttons.length; i++) 
+	    {
+	    	if(buttons[i].className=="on")
+	    	{
+	    		buttons[i].className="";
+	    	}
+	    }
+    }
+
+    for (var i = 0; i < buttons.length; i++) 
+    {
+    	buttons[i].onclick=function()
+    	{
+    		deselectAll();
+    		this.className="on";
+    		clearInterval(timer);
+    		var selIndex = Number(this.getAttribute("index"));
+    		var showPosition = -(selIndex-1)*900;
+    		document.getElementById("list").style.left = showPosition;
+
+    	}
+    }
+
+    function prev() 
+    {             
+	    var oriLeft = Number(document.getElementById('list').offsetLeft);//offsetLeft是获取当前元素的left数值，不带px
+	    var oriLeft=oriLeft-900;
+	    if(oriLeft<-4500){
+	    	document.getElementById("list").style.left = 0+"px";
+	    }
+	    else{
+	    	document.getElementById("list").style.left = oriLeft+"px";
+	    }
+	    getIndex();
+	}
+
+	function next() 
+	{  
+        var oriLeft = Number(document.getElementById('list').offsetLeft);
+        var oriLeft=oriLeft+900;
+        if(oriLeft>0){
+        	document.getElementById("list").style.left = -4500+"px";
+        }
+        else{
+        	document.getElementById("list").style.left = oriLeft+"px";
+        }
+        getIndex();
+    }
+
+    function getIndex()
+    {
+    	var curLeft = Number(document.getElementById("list").offsetLeft);
+    	var index=0;
+    	if(curLeft==0)
+    	{
+    		index=0;
+    	}
+    	else
+    	{
+			index = curLeft/900+6;
+    	}
+    	deselectAll();
+    	buttons[index].className="on";
+    }
+	</script>
+</body>
+</html>
+
